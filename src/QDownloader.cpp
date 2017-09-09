@@ -27,8 +27,12 @@ QDownloader::QDownloader()
 {
 }
 
-QByteArray QDownloader::download(const QUrl& url)
+QByteArray QDownloader::get(const QUrl& url)
 {
-    return self().impl->download(url);
+    return self().impl->get(url);
 }
 
+void QDownloader::get_async(const QUrl& url, std::function<void(QByteArray data)> callback)
+{
+    return self().impl->get_async(url, callback);
+}

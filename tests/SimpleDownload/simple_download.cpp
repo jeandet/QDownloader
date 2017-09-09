@@ -23,6 +23,7 @@
 #include <QDownloader.h>
 #include <QString>
 #include <iostream>
+#include <QCoreApplication>
 
 class SimpleDownload: public QObject
 {
@@ -30,6 +31,7 @@ class SimpleDownload: public QObject
 private slots:
     void initTestCase();
     void download();
+    void download_async();
 };
 
 void SimpleDownload::initTestCase()
@@ -40,7 +42,28 @@ void SimpleDownload::download()
 {
     auto left = QString("Lorem ipsum dolor sit amet");
     auto right = QString("no sea takimata sanctus est Lorem ipsum dolor sit amet.");
-    auto txt = QString(QDownloader::download(QUrl{"http://www.loremipsum.de/downloads/original.txt"}));
+    auto txt = QString(QDownloader::get(QUrl{"http://www.loremipsum.de/downloads/original.txt"}));
+    QCOMPARE(txt.left(left.size()), left);
+    QCOMPARE(txt.right(right.size()), right);
+}
+
+void SimpleDownload::download_async()
+{
+    bool done(false);
+    QString txt;
+    auto left = QString("Lorem ipsum dolor sit amet");
+    auto right = QString("no sea takimata sanctus est Lorem ipsum dolor sit amet.");
+    QDownloader::get_async(QUrl{"http://www.loremipsum.de/downloads/original.txt"},
+        [&](QByteArray data)
+        {
+            done = true;
+            txt = data;
+        }
+    );
+    while(!done)
+    {
+        QCoreApplication::instance()->processEvents();
+    }
     QCOMPARE(txt.left(left.size()), left);
     QCOMPARE(txt.right(right.size()), right);
 }

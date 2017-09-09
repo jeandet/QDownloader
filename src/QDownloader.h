@@ -26,6 +26,7 @@
 #include <QUrl>
 #include <QByteArray>
 #include <spimpl.h>
+#include <functional>
 
 class QDownloaderPrivate;
 
@@ -38,7 +39,8 @@ public:
             static QDownloader dl;
             return dl;
         }
-    static QByteArray download(const QUrl& url);
+    static QByteArray get(const QUrl& url);
+    static void get_async(const QUrl& url, std::function<void(QByteArray data)> callback);
 private:
     spimpl::impl_ptr<QDownloaderPrivate> impl;
 };

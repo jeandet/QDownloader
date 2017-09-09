@@ -25,7 +25,7 @@
 #include <iostream>
 #include <QCoreApplication>
 
-QByteArray QDownloaderPrivate::download(const QUrl& url)
+QByteArray QDownloaderPrivate::get(const QUrl& url)
 {
     auto reply = p_access_mngr.get(QNetworkRequest(url));
     while(!reply->isFinished())
@@ -35,4 +35,14 @@ QByteArray QDownloaderPrivate::download(const QUrl& url)
     auto data = reply->readAll();
     delete reply;
     return data;
+}
+
+void QDownloaderPrivate::get_async(const QUrl& url, std::function<void(QByteArray data)> callback)
+{
+    auto reply = p_access_mngr.get(QNetworkRequest(url));
+    QObject::connect(reply,&QNetworkReply::finished, [reply,callback](){
+        auto data=reply->readAll();
+        delete reply;
+        callback(data);
+        } );
 }

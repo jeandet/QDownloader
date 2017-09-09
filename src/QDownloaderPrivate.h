@@ -30,7 +30,8 @@ class QDownloaderPrivate
 public:
     QDownloaderPrivate(){}
     QDownloaderPrivate ( const QDownloaderPrivate & ){}
-    QByteArray download(const QUrl& url);
+    QByteArray get(const QUrl& url);
+    void get_async(const QUrl& url, std::function<void(QByteArray data)> callback);
 private:
     QNetworkAccessManager p_access_mngr;
 };
